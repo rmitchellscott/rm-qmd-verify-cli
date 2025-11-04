@@ -90,6 +90,12 @@ homebrew_casks:
     skip_upload: "{{ .IsSnapshot }}"
     binaries:
       - qmdverify
+    hooks:
+      post:
+        install: |
+          if OS.mac?
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/qmdverify"]
+          end
     homepage: https://github.com/rmitchellscott/rm-qmd-verify-cli
     description: QMD file compatibility checker for reMarkable devices
     license: MIT
