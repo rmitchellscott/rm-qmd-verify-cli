@@ -73,8 +73,20 @@ func RenderComparisonResults(response *api.ComparisonResponse, verbose bool) {
 	fmt.Println(tableStr)
 	fmt.Println()
 
-	compatibleCount := compatibleStyle.Render(fmt.Sprintf("%d compatible", len(response.Compatible)))
-	incompatibleCount := incompatibleStyle.Render(fmt.Sprintf("%d incompatible", len(response.Incompatible)))
+	var compatibleCount string
+	if len(response.Compatible) > 0 {
+		compatibleCount = compatibleStyle.Render(fmt.Sprintf("%d compatible", len(response.Compatible)))
+	} else {
+		compatibleCount = fmt.Sprintf("%d compatible", len(response.Compatible))
+	}
+
+	var incompatibleCount string
+	if len(response.Incompatible) > 0 {
+		incompatibleCount = incompatibleStyle.Render(fmt.Sprintf("%d incompatible", len(response.Incompatible)))
+	} else {
+		incompatibleCount = fmt.Sprintf("%d incompatible", len(response.Incompatible))
+	}
+
 	summary := fmt.Sprintf("Summary: %d checked | %s | %s",
 		response.TotalChecked,
 		compatibleCount,
