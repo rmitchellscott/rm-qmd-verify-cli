@@ -60,6 +60,55 @@ qmdverify myfile.qmd --verbose
 qmdverify check myfile.qmd -v
 ```
 
+### Filtering Results
+
+Filter results by device type and/or OS version to focus on specific targets.
+
+#### Filter by Device
+
+Check compatibility for specific device(s) using `--device` or `-d`:
+
+```bash
+# Single device
+qmdverify check --device rmpp myfile.qmd
+qmdverify check -d rmpp myfile.qmd
+
+# Multiple devices
+qmdverify check --device rmpp --device rmppm myfile.qmd
+qmdverify check -d rm1 -d rm2 myfile.qmd
+```
+
+Valid device values: `rm1`, `rm2`, `rmpp`, `rmppm`
+
+#### Filter by Version
+
+Check compatibility for specific OS version(s) using `--version`. Supports prefix matching:
+
+```bash
+# Exact version
+qmdverify check --version 3.22.4.2 myfile.qmd
+
+# Version prefix (matches all 3.22.x.x versions)
+qmdverify check --version 3.22 myfile.qmd
+
+# Multiple versions
+qmdverify check --version 3.22.4.2 --version 3.21.0.79 myfile.qmd
+```
+
+#### Combine Filters
+
+Filter by both device and version:
+
+```bash
+# Check rmpp device with version 3.22.x only
+qmdverify check --device rmpp --version 3.22 myfile.qmd
+
+# Multiple devices and versions
+qmdverify check -d rmpp -d rmppm --version 3.22.4.2 myfile.qmd
+```
+
+**Note**: If no devices match your filter criteria, a warning is displayed and the command exits with code 0 (success).
+
 ### List Available Hashtables
 
 Display all available device types and OS versions:
