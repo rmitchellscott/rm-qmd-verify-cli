@@ -12,11 +12,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	deviceFilter  []string
-	versionFilter []string
-)
-
 var checkCmd = &cobra.Command{
 	Use:   "check [file.qmd]",
 	Short: "Check QMD file compatibility",
