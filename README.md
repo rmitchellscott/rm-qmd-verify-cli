@@ -102,7 +102,7 @@ $ qmdverify template.qmd
 Uploading template.qmd to http://qmdverify.scottlabs.io...
 
 
-    QMD Compatibility Check Results
+         reMarkable QMD Verifier
 
                   rm1   rm2   rmpp rmppm 
 ─────────────────────────────────────────
@@ -130,7 +130,7 @@ $ qmdverify template.qmd --verbose
 Uploading template.qmd to http://qmdverify.scottlabs.io...
 
 
-        QMD Compatibility Check Results
+         reMarkable QMD Verifier
 
                   rm1   rm2   rmpp rmppm 
 ─────────────────────────────────────────

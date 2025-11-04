@@ -60,7 +60,7 @@ func RenderComparisonResults(response *api.ComparisonResponse, verbose bool) {
 
 	tableStr := buildMatrixTable(matrix, versions, devices, verbose)
 
-	title := "QMD Compatibility Check Results"
+	title := "reMarkable QMD Verifier"
 	titleWidth := lipgloss.Width(tableStr)
 	centeredTitle := lipgloss.NewStyle().
 		Width(titleWidth).
