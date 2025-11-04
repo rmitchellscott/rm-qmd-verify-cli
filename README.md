@@ -208,10 +208,6 @@ goreleaser release --snapshot --clean
 - Go 1.21 or later (for building from source)
 - Access to a running [rm-qmd-verify](https://github.com/rmitchellscott/rm-qmd-verify) server
 
-## Related Projects
-
-- [rm-qmd-verify](https://github.com/rmitchellscott/rm-qmd-verify) - QMD compatibility check server
-
 ## License
 
 MIT
