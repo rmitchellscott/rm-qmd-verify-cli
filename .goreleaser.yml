@@ -32,7 +32,7 @@ builds:
 
 archives:
   - id: default
-    format: tar.gz
+    formats: ['tar.gz']
     name_template: >-
       {{ .ProjectName }}_
       {{- .Version }}_
@@ -44,7 +44,7 @@ archives:
       {{- else }}{{ .Arch }}{{ end }}
     format_overrides:
       - goos: windows
-        format: zip
+        formats: ['zip']
     files:
       - README.md
       - LICENSE*
@@ -85,8 +85,12 @@ release:
   mode: replace
   name_template: "{{.ProjectName}} v{{.Version}}"
 
-brews:
-  - homepage: https://github.com/rmitchellscott/rm-qmd-verify-cli
+homebrew_casks:
+  - name: qmdverify
+    skip_upload: "{{ .IsSnapshot }}"
+    binaries:
+      - qmdverify
+    homepage: https://github.com/rmitchellscott/rm-qmd-verify-cli
     description: QMD file compatibility checker for reMarkable devices
     license: MIT
     repository:
@@ -94,8 +98,7 @@ brews:
       name: homebrew-tap
       git:
         url: 'ssh://git@github.com/rmitchellscott/homebrew-tap.git'
-        private_key: '{{ .Env.HOMEBREW_PRIVATE_KEY }}'
-    directory: Formula
+        private_key: '{{ envOrDefault "HOMEBREW_PRIVATE_KEY" "" }}'
 
 announce:
   skip: true
