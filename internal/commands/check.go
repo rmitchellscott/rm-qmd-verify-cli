@@ -12,6 +12,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	deviceFilter  []string
+	versionFilter []string
+)
+
 var checkCmd = &cobra.Command{
 	Use:   "check [file.qmd]",
 	Short: "Check QMD file compatibility",
@@ -19,17 +24,92 @@ var checkCmd = &cobra.Command{
 reMarkable device types and OS versions.`,
 	Example: `  qmdverify check myfile.qmd
   qmdverify check myfile.qmd --verbose
-  qmdverify myfile.qmd`,
+  qmdverify check --device rmpp myfile.qmd
+  qmdverify check --version 3.22 myfile.qmd
+  qmdverify check --device rmpp --device rmppm --version 3.22.4.2 myfile.qmd`,
 	SilenceUsage: true,
 	Args:         cobra.ExactArgs(1),
 	RunE:         runCheck,
 }
 
+func init() {
+	checkCmd.Flags().StringSliceVarP(&deviceFilter, "device", "d", nil, "Filter by device (can be repeated: rm1, rm2, rmpp, rmppm)")
+	checkCmd.Flags().StringSliceVar(&versionFilter, "version", nil, "Filter by version prefix (can be repeated, e.g., 3.22 or 3.22.4.2)")
+}
+
+
+var validDevices = map[string]bool{
+	"rm1":   true,
+	"rm2":   true,
+	"rmpp":  true,
+	"rmppm": true,
+}
+
+func validateDeviceFilters(devices []string) error {
+	for _, device := range devices {
+		if !validDevices[device] {
+			return fmt.Errorf("invalid device '%s'. Valid devices: rm1, rm2, rmpp, rmppm", device)
+		}
+	}
+	return nil
+}
+
+func matchesFilter(result api.ComparisonResult, devices, versions []string) bool {
+	deviceMatch := len(devices) == 0
+	for _, d := range devices {
+		if result.Device == d {
+			deviceMatch = true
+			break
+		}
+	}
+
+	versionMatch := len(versions) == 0
+	for _, v := range versions {
+		if strings.HasPrefix(result.OSVersion, v) {
+			versionMatch = true
+			break
+		}
+	}
+
+	return deviceMatch && versionMatch
+}
+
+func filterResponse(response *api.ComparisonResponse, devices, versions []string) *api.ComparisonResponse {
+	if len(devices) == 0 && len(versions) == 0 {
+		return response
+	}
+
+	filtered := &api.ComparisonResponse{
+		Compatible:   make([]api.ComparisonResult, 0),
+		Incompatible: make([]api.ComparisonResult, 0),
+	}
+
+	for _, result := range response.Compatible {
+		if matchesFilter(result, devices, versions) {
+			filtered.Compatible = append(filtered.Compatible, result)
+		}
+	}
+
+	for _, result := range response.Incompatible {
+		if matchesFilter(result, devices, versions) {
+			filtered.Incompatible = append(filtered.Incompatible, result)
+		}
+	}
+
+	filtered.TotalChecked = len(filtered.Compatible) + len(filtered.Incompatible)
+
+	return filtered
+}
 
 func runCheck(cmd *cobra.Command, args []string) error {
 	filePath := args[0]
 
 	if err := validateQMDFile(filePath); err != nil {
+		display.RenderError(err)
+		return err
+	}
+
+	if err := validateDeviceFilters(deviceFilter); err != nil {
 		display.RenderError(err)
 		return err
 	}
@@ -43,6 +123,13 @@ func runCheck(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		display.RenderError(fmt.Errorf("failed to check compatibility: %w", err))
 		return err
+	}
+
+	response = filterResponse(response, deviceFilter, versionFilter)
+
+	if response.TotalChecked == 0 {
+		fmt.Println("Warning: No devices matched your filter criteria")
+		return nil
 	}
 
 	display.RenderComparisonResults(response, verbose)
