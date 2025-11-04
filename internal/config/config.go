@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	DefaultHost = "http://localhost:8080"
+	DefaultHost = "http://qmdverify.scottlabs.io"
 	EnvVarHost  = "QMDVERIFY_HOST"
 )
 

@@ -80,7 +80,7 @@ qmdverify version
 
 ### Server Endpoint
 
-By default, `qmdverify` connects to `http://localhost:8080`. Override this using the `QMDVERIFY_HOST` environment variable:
+By default, `qmdverify` connects to `http://qmdverify.scottlabs.io`. Override this using the `QMDVERIFY_HOST` environment variable:
 
 ```bash
 export QMDVERIFY_HOST=https://qmdverify.example.com
@@ -99,7 +99,7 @@ QMDVERIFY_HOST=https://qmdverify.example.com qmdverify myfile.qmd
 
 ```bash
 $ qmdverify template.qmd
-Uploading template.qmd to http://localhost:8080...
+Uploading template.qmd to http://qmdverify.scottlabs.io...
 
 
     QMD Compatibility Check Results
@@ -127,7 +127,7 @@ Exit code is 0 if all devices are compatible, 1 if any incompatibilities are fou
 
 ```bash
 $ qmdverify template.qmd --verbose
-Uploading template.qmd to http://localhost:8080...
+Uploading template.qmd to http://qmdverify.scottlabs.io...
 
 
         QMD Compatibility Check Results
@@ -155,7 +155,7 @@ Summary: 12 checked | 7 compatible | 5 incompatible
 
 ```bash
 $ qmdverify list
-Fetching hashtables from http://localhost:8080...
+Fetching hashtables from http://qmdverify.scottlabs.io...
 
                     
 Available Hashtables

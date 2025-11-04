@@ -83,7 +83,7 @@ release:
   draft: false
   prerelease: auto
   mode: replace
-  name_template: "{{.ProjectName}} v{{.Version}}"
+  name_template: "v{{.Version}}"
 
 homebrew_casks:
   - name: qmdverify

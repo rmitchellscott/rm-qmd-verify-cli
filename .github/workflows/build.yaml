@@ -3,6 +3,10 @@ name: goreleaser
 on:
   pull_request:
   push:
+    branches:
+      - '**'
+    tags-ignore:
+      - 'v*'
 
 permissions:
   contents: write
@@ -11,8 +15,7 @@ jobs:
   goreleaser:
     runs-on: ubuntu-latest
     steps:
-      - if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
-        run: echo "flags=--snapshot" >> $GITHUB_ENV
+      - run: echo "flags=--snapshot" >> $GITHUB_ENV
 
       - name: Checkout
         uses: actions/checkout@v4
