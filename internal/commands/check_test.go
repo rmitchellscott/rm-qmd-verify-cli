@@ -209,6 +209,56 @@ func TestMatchesFilter(t *testing.T) {
 			versions: []string{"3.22", "3.21"},
 			want:     true,
 		},
+		{
+			name: "semver edge case - 3.2 should NOT match 3.22",
+			result: api.ComparisonResult{
+				Device:    "rmpp",
+				OSVersion: "3.22.4.2",
+			},
+			devices:  []string{},
+			versions: []string{"3.2"},
+			want:     false,
+		},
+		{
+			name: "semver edge case - 3.2 should NOT match 3.20",
+			result: api.ComparisonResult{
+				Device:    "rmpp",
+				OSVersion: "3.20.0.92",
+			},
+			devices:  []string{},
+			versions: []string{"3.2"},
+			want:     false,
+		},
+		{
+			name: "semver edge case - 3 should NOT match 30",
+			result: api.ComparisonResult{
+				Device:    "rmpp",
+				OSVersion: "30.1.2.3",
+			},
+			devices:  []string{},
+			versions: []string{"3"},
+			want:     false,
+		},
+		{
+			name: "semver valid - 3.2 should match 3.2.1.5",
+			result: api.ComparisonResult{
+				Device:    "rmpp",
+				OSVersion: "3.2.1.5",
+			},
+			devices:  []string{},
+			versions: []string{"3.2"},
+			want:     true,
+		},
+		{
+			name: "semver valid - 3 should match 3.22.4.2",
+			result: api.ComparisonResult{
+				Device:    "rmpp",
+				OSVersion: "3.22.4.2",
+			},
+			devices:  []string{},
+			versions: []string{"3"},
+			want:     true,
+		},
 	}
 
 	for _, tt := range tests {
@@ -216,6 +266,91 @@ func TestMatchesFilter(t *testing.T) {
 			got := matchesFilter(tt.result, tt.devices, tt.versions)
 			if got != tt.want {
 				t.Errorf("matchesFilter() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestMatchesVersionPrefix(t *testing.T) {
+	tests := []struct {
+		name    string
+		version string
+		prefix  string
+		want    bool
+	}{
+		{
+			name:    "exact match",
+			version: "3.22.4.2",
+			prefix:  "3.22.4.2",
+			want:    true,
+		},
+		{
+			name:    "prefix match two segments",
+			version: "3.22.4.2",
+			prefix:  "3.22",
+			want:    true,
+		},
+		{
+			name:    "prefix match one segment",
+			version: "3.22.4.2",
+			prefix:  "3",
+			want:    true,
+		},
+		{
+			name:    "3.2 should NOT match 3.22 (semver edge case)",
+			version: "3.22.4.2",
+			prefix:  "3.2",
+			want:    false,
+		},
+		{
+			name:    "3.2 should NOT match 3.20 (semver edge case)",
+			version: "3.20.0.92",
+			prefix:  "3.2",
+			want:    false,
+		},
+		{
+			name:    "3 should NOT match 30 (semver edge case)",
+			version: "30.1.2.3",
+			prefix:  "3",
+			want:    false,
+		},
+		{
+			name:    "3.2 should match 3.2.x.x (valid prefix)",
+			version: "3.2.1.5",
+			prefix:  "3.2",
+			want:    true,
+		},
+		{
+			name:    "3.2.1 should match 3.2.1.x (valid prefix)",
+			version: "3.2.1.5",
+			prefix:  "3.2.1",
+			want:    true,
+		},
+		{
+			name:    "prefix longer than version",
+			version: "3.22",
+			prefix:  "3.22.4.2",
+			want:    false,
+		},
+		{
+			name:    "different major version",
+			version: "4.22.4.2",
+			prefix:  "3",
+			want:    false,
+		},
+		{
+			name:    "different minor version",
+			version: "3.21.4.2",
+			prefix:  "3.22",
+			want:    false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := matchesVersionPrefix(tt.version, tt.prefix)
+			if got != tt.want {
+				t.Errorf("matchesVersionPrefix(%q, %q) = %v, want %v", tt.version, tt.prefix, got, tt.want)
 			}
 		})
 	}

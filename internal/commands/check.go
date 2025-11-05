@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/rmitchellscott/rm-qmd-verify-cli/internal/api"
@@ -49,6 +50,33 @@ func validateDeviceFilters(devices []string) error {
 	return nil
 }
 
+func matchesVersionPrefix(version, prefix string) bool {
+	versionParts := strings.Split(version, ".")
+	prefixParts := strings.Split(prefix, ".")
+
+	if len(prefixParts) > len(versionParts) {
+		return false
+	}
+
+	for i, prefixPart := range prefixParts {
+		prefixNum, err1 := strconv.Atoi(prefixPart)
+		versionNum, err2 := strconv.Atoi(versionParts[i])
+
+		if err1 != nil || err2 != nil {
+			if versionParts[i] != prefixPart {
+				return false
+			}
+			continue
+		}
+
+		if versionNum != prefixNum {
+			return false
+		}
+	}
+
+	return true
+}
+
 func matchesFilter(result api.ComparisonResult, devices, versions []string) bool {
 	deviceMatch := len(devices) == 0
 	for _, d := range devices {
@@ -60,7 +88,7 @@ func matchesFilter(result api.ComparisonResult, devices, versions []string) bool
 
 	versionMatch := len(versions) == 0
 	for _, v := range versions {
-		if strings.HasPrefix(result.OSVersion, v) {
+		if matchesVersionPrefix(result.OSVersion, v) {
 			versionMatch = true
 			break
 		}
