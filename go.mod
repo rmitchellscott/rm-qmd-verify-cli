@@ -4,6 +4,7 @@ go 1.24.4
 
 require (
 	github.com/charmbracelet/lipgloss v1.1.0
+	github.com/rmitchellscott/rm-qmd-verify v1.1.0
 	github.com/spf13/cobra v1.10.1
 )
 
@@ -13,7 +14,10 @@ require (
 	github.com/charmbracelet/x/ansi v0.8.0 // indirect
 	github.com/charmbracelet/x/cellbuf v0.0.13-0.20250311204145-2c3ea96c31dd // indirect
 	github.com/charmbracelet/x/term v0.2.1 // indirect
+	github.com/go-chi/chi/v5 v5.0.11 // indirect
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect

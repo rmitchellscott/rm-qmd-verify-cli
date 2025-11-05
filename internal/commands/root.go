@@ -52,4 +52,5 @@ func init() {
 	rootCmd.AddCommand(checkCmd)
 	rootCmd.AddCommand(listCmd)
 	rootCmd.AddCommand(versionCmd)
+	rootCmd.AddCommand(hashlistCmd)
 }

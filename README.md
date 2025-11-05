@@ -117,6 +117,18 @@ Display all available device types and OS versions:
 qmdverify list
 ```
 
+### Hashtable Conversion
+
+Convert hashtab files to compact hashlist format:
+
+```bash
+qmdverify hashlist create hashtabs/3.22.0.64-rmpp hashlists/3.22.0.64-rmpp
+```
+
+This command strips string data from hashtab files (hash-string pairs) and outputs a compact hashlist file containing only the hashes in qmldiff's binary format.
+
+**Note**: The input must be a valid hashtab file. If the input is already a hashlist, an error is returned.
+
 ### Version Information
 
 Show CLI and server versiosn:
