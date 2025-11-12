@@ -11,6 +11,8 @@ var (
 	verbose       bool
 	deviceFilter  []string
 	versionFilter []string
+	fileFilter    []string
+	failedOnly    bool
 )
 
 var rootCmd = &cobra.Command{
@@ -48,6 +50,8 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Show detailed error messages for incompatible devices")
 	rootCmd.Flags().StringSliceVarP(&deviceFilter, "device", "d", nil, "Filter by device (can be repeated: rm1, rm2, rmpp, rmppm)")
 	rootCmd.Flags().StringSliceVar(&versionFilter, "version", nil, "Filter by version prefix (can be repeated, e.g., 3.22 or 3.22.4.2)")
+	rootCmd.Flags().StringSliceVarP(&fileFilter, "file", "f", nil, "Filter output to specific files (can be repeated, supports glob patterns)")
+	rootCmd.Flags().BoolVar(&failedOnly, "failed-only", false, "Only show files with incompatibilities")
 
 	rootCmd.AddCommand(checkCmd)
 	rootCmd.AddCommand(listCmd)

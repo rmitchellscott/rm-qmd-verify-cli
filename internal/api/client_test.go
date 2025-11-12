@@ -38,16 +38,25 @@ func TestClient_CompareQMD(t *testing.T) {
 			TotalChecked: 2,
 		}
 
-		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if r.Method != "POST" {
-				t.Errorf("Expected POST request, got %s", r.Method)
-			}
-			if r.URL.Path != "/api/compare" {
-				t.Errorf("Expected /api/compare path, got %s", r.URL.Path)
-			}
+		testJobID := "test-job-123"
 
-			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(mockResponse)
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.URL.Path == "/api/compare" {
+				if r.Method != "POST" {
+					t.Errorf("Expected POST request, got %s", r.Method)
+				}
+				w.WriteHeader(http.StatusOK)
+				json.NewEncoder(w).Encode(CompareJobResponse{JobID: testJobID})
+			} else if r.URL.Path == "/api/results/"+testJobID {
+				if r.Method != "GET" {
+					t.Errorf("Expected GET request, got %s", r.Method)
+				}
+				w.WriteHeader(http.StatusOK)
+				json.NewEncoder(w).Encode(mockResponse)
+			} else {
+				t.Errorf("Unexpected path: %s", r.URL.Path)
+				w.WriteHeader(http.StatusNotFound)
+			}
 		}))
 		defer server.Close()
 
@@ -83,10 +92,12 @@ func TestClient_CompareQMD(t *testing.T) {
 		}
 	})
 
-	t.Run("error - server error", func(t *testing.T) {
+	t.Run("error - server error on submit", func(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(ErrorResponse{Error: "Internal server error"})
+			if r.URL.Path == "/api/compare" {
+				w.WriteHeader(http.StatusInternalServerError)
+				json.NewEncoder(w).Encode(ErrorResponse{Error: "Internal server error"})
+			}
 		}))
 		defer server.Close()
 
@@ -104,10 +115,12 @@ func TestClient_CompareQMD(t *testing.T) {
 		}
 	})
 
-	t.Run("error - bad JSON response", func(t *testing.T) {
+	t.Run("error - bad JSON response on submit", func(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			w.WriteHeader(http.StatusOK)
-			w.Write([]byte("invalid json"))
+			if r.URL.Path == "/api/compare" {
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte("invalid json"))
+			}
 		}))
 		defer server.Close()
 
