@@ -342,6 +342,47 @@ func renderTableRow(cells []string, widths []int) {
 	fmt.Println(" " + lipgloss.JoinHorizontal(lipgloss.Left, renderedCells...))
 }
 
+func RenderTreeList(response *api.TreesResponse) {
+	fmt.Println(titleStyle.Render("Available QML Trees"))
+	fmt.Println()
+
+	if response.Count == 0 {
+		fmt.Println(infoStyle.Render("No QML trees available on the server"))
+		return
+	}
+
+	headers := []string{"Device", "OS Version", "QML Files", "Directory"}
+	colWidths := []int{10, 15, 12, 30}
+
+	for _, tree := range response.Trees {
+		if len(tree.Device) > colWidths[0] {
+			colWidths[0] = len(tree.Device)
+		}
+		if len(tree.Version) > colWidths[1] {
+			colWidths[1] = len(tree.Version)
+		}
+		if len(tree.Directory) > colWidths[3] {
+			colWidths[3] = len(tree.Directory)
+		}
+	}
+
+	renderTableHeader(headers, colWidths)
+	renderTableSeparator(colWidths)
+
+	for _, tree := range response.Trees {
+		row := []string{
+			tree.Device,
+			tree.Version,
+			fmt.Sprintf("%d", tree.QMLCount),
+			tree.Directory,
+		}
+		renderTableRow(row, colWidths)
+	}
+
+	fmt.Println()
+	fmt.Printf("Total Trees: %d\n", response.Count)
+}
+
 func RenderError(err error) {
 	fmt.Println(errorStyle.Render(fmt.Sprintf("Error: %s", err.Error())))
 }
