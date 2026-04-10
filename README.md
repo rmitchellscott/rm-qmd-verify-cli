@@ -394,4 +394,4 @@ goreleaser release --snapshot --clean
 
 ## License
 
-MIT
+GPL-3.0-only

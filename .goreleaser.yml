@@ -98,7 +98,7 @@ homebrew_casks:
           end
     homepage: https://github.com/rmitchellscott/rm-qmd-verify-cli
     description: QMD file compatibility checker for reMarkable devices
-    license: MIT
+    license: GPL-3.0-only
     repository:
       owner: rmitchellscott
       name: homebrew-tap
