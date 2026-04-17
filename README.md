@@ -393,5 +393,6 @@ goreleaser release --snapshot --clean
 - Access to a running [rm-qmd-verify](https://github.com/rmitchellscott/rm-qmd-verify) server
 
 ## License
+Copyright (C) 2025 Mitchell Scott
 
-GPL-3.0-only
+Licensed under the GNU General Public License v3.0.
